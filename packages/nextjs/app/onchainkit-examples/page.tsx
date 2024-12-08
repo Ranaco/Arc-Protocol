@@ -1,5 +1,6 @@
 "use client";
 
+import "../../styles/globals.css";
 import { OnchainKitIdentity } from "./_components/OnchainKitIdentity";
 import { OnchainKitSwap } from "./_components/OnchainKitSwap";
 import { OnchainKitTokens } from "./_components/OnchainKitTokens";

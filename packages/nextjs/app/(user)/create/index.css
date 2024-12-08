@@ -1,0 +1,7 @@
+[data-placeholder]:empty::before {
+  content: attr(data-placeholder);
+  color: #6c757d; /* Light gray for placeholder */
+  pointer-events: none; /* Allows clicks to focus on the contentEditable */
+  display: block; /* Ensures placeholder text occupies space */
+  font-size: 1.3rem;
+}
