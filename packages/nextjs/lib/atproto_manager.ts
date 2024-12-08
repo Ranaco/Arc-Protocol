@@ -61,8 +61,7 @@ class AtProtoManager {
       collection: "app.bsky.actor.profileExtra",
       rkey: `extras`,
       record: {
-        walletSeed: extras.seed,
-        walletId: extras.walletId,
+        ...extras,
         updatedAt: new Date().toISOString(),
       },
     };

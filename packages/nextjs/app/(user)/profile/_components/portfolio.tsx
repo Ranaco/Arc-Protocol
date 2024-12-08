@@ -5,8 +5,25 @@ import Cookies from "js-cookie";
 import PostTile from "~~/components/post_tile";
 import AtProtoManager from "~~/lib/atproto_manager";
 
+const handleProfitOrLoss = async (post: any) => {
+  const res = await fetch("/api/wallet/curve", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      method: "getUserProfitOrLossForPost",
+      get: true,
+      args: { postId: post?.uri },
+    }),
+  });
+
+  const val = await res.json();
+
+  return Number(val);
+};
+
 const fetchInvestments = async (atList: any[]) => {
-  // Fetch the posts the user invested in from your backend API
   console.log("HElor lit", atList);
   const atPro = new AtProtoManager();
   const investments: any[] = [];
@@ -17,7 +34,7 @@ const fetchInvestments = async (atList: any[]) => {
 
   return investments;
 };
-const Portfolio = ({ inv }: { inv: any[] }) => {
+const Portfolio = ({ inv, profile }: { inv: any[]; profile: any }) => {
   const accessJwt = Cookies.get("accessJwt");
   const actor = Cookies.get("did");
   const [investments, setInvestments] = React.useState<any[]>([]);
@@ -42,7 +59,7 @@ const Portfolio = ({ inv }: { inv: any[] }) => {
   return (
     <>
       {investments.length > 0 ? (
-        investments.map((inv, index) => <PostTile key={index} post={inv.post} user={inv?.post?.author} withdraw />)
+        investments.map((inv, index) => <PostTile key={index} post={inv} user={profile} withdraw />)
       ) : (
         <p className="text-center text-gray-500">No investments to display</p>
       )}

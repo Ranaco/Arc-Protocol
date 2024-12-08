@@ -38,13 +38,14 @@ export async function POST(request: NextRequest) {
         contractAddress: externalContracts[1].ARCBoundingCurveMarketplace.address,
         method: method,
         args: {
+          ...args,
           user: address.getId().toString(),
         },
         abi: externalContracts[1].ARCBoundingCurveMarketplace.abi as any,
         networkId: "base-sepolia",
       });
       res = posts;
-      console.log(posts);
+      console.log("Posts, from ,", posts);
     }
     return NextResponse.json({ res });
   } catch (err) {

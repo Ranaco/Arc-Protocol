@@ -40,6 +40,8 @@ const Create: React.FC<CreateProps> = () => {
       try {
         const atProtoManager = new AtProtoManager();
 
+        const { reputationPoint } = await fetchReputation();
+
         const record = {
           $type: "app.bsky.feed.post",
           text: post.content,
@@ -104,6 +106,22 @@ const Create: React.FC<CreateProps> = () => {
 
   const handleInput = (id: string, value: string | boolean | number) => setPost(prev => ({ ...prev, [id]: value }));
 
+  const fetchReputation = async () => {
+    const response = await fetch("/api/attest", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch reputation");
+    }
+
+    const data = await response.json();
+    return data;
+  };
+
   return (
     <div className="flex flex-col gap-3 w-full rounded-md shadow-lg">
       <div className="flex items-start gap-3 rounded-md shadow-lg p-4">
@@ -153,7 +171,11 @@ const Create: React.FC<CreateProps> = () => {
               <button onClick={handleContractCall} className="text-blue-500 hover:text-blue-600 focus:outline-none">
                 <LImage className="w-5 h-5" size="24" />
               </button>
-              <button className="text-blue-500 hover:text-blue-600 focus:outline-none" title="Add Video">
+              <button
+                onClick={fetchReputation}
+                className="text-blue-500 hover:text-blue-600 focus:outline-none"
+                title="Add Video"
+              >
                 <Video className="w-5 h-5" size="24" />
               </button>
             </div>

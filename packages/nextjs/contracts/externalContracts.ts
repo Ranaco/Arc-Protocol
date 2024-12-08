@@ -20,7 +20,7 @@ const externalContracts = {
       abi: ARCTokenABI,
     },
     ARCBoundingCurveMarketplace: {
-      address: "0x32CEE3219D1522Adce50ea99B612C475BEc56564",
+      address: "0x1CD6495201fe4aE5CA4bBc7b8b014cD46CC7cF3a",
       abi: ARCBoundingCurveMarketplaceABI,
     },
   },

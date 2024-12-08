@@ -13,12 +13,29 @@ interface PostTileProps {
   withdraw: boolean;
 }
 
+const fetchNetWorth = async (post: any) => {
+  const res = await fetch("/api/wallet/curve", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      method: "getUserProfitOrLossForPost",
+      get: true,
+      args: { postId: post?.uri },
+    }),
+  });
+  const data = await res.json();
+  console.log("this is networth", data);
+};
+
 const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
-  const aspectRatio = post.record?.embed?.images?.[0]?.aspectRatio;
-  const [liked, setLiked] = React.useState(post.viewer.like);
-  const [likeCount, setLikeCount] = React.useState(post.likeCount || 0);
+  const aspectRatio = post?.record?.embed?.images?.[0]?.aspectRatio;
+  const [liked, setLiked] = React.useState(post?.viewer?.like);
+  const [likeCount, setLikeCount] = React.useState(post?.likeCount || 0);
   const [showWithdrawPopup, setShowWithdrawPopup] = React.useState(false);
   const [withdrawAmount, setWithdrawAmount] = React.useState("");
+  fetchNetWorth(post);
 
   const dynamicAspectRatioStyle = aspectRatio
     ? { paddingBottom: `${(aspectRatio.height / aspectRatio.width) * 100}%` }
@@ -57,7 +74,7 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
       });
 
       console.log("investing in post", post);
-      const uri = post.uri;
+      const uri = post?.uri;
       const res = await fetch("/api/wallet/curve", {
         method: "POST",
         headers: {
@@ -87,7 +104,7 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
 
   const handleWithdrawSubmit = async () => {
     try {
-      const uri = post.uri;
+      const uri = post?.uri;
       const res = await fetch("/api/wallet/curve", {
         method: "POST",
         headers: {
@@ -97,8 +114,18 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
           method: "withdrawFromPost",
           args: {
             postId: uri,
-            amount: withdrawAmount,
+            tokensToSell: withdrawAmount,
           },
+        }),
+      });
+
+      await fetch("/api/attest/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          profitMade: withdrawAmount,
         }),
       });
 
@@ -118,15 +145,15 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
   const handleLikeClick = async () => {
     try {
       const atProtoManager = new AtProtoManager();
-      if (liked && post.viewer?.like) {
-        await atProtoManager.deleteRecord("app.bsky.feed.like", post.viewer.like);
+      if (liked && post?.viewer?.like) {
+        await atProtoManager.deleteRecord("app.bsky.feed.like", post?.viewer.like);
         setLiked(false);
         setLikeCount((prev: any) => Math.max(prev - 1, 0));
       } else {
         const record = {
           subject: {
-            uri: post.uri,
-            cid: post.cid,
+            uri: post?.uri,
+            cid: post?.cid,
           },
           createdAt: new Date().toISOString(),
         };
@@ -138,6 +165,8 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
       console.error("Error handling like:", error);
     }
   };
+
+  console.log("This is the investment post", post?.value?.text);
 
   return (
     <div className="w-full flex flex-row gap-4 p-4 shadow-[0_0_0_1px_rgba(255,255,255,0.1)] relative">
@@ -185,17 +214,17 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
         <div className="flex flex-row gap-2 items-center">
           <span className="font-medium text-sm text-black dark:text-white text-nowrap">{user.displayName}</span>
           <span className="text-gray-400 text-sm">@{user.handle}</span>
-          <span>·&nbsp;&nbsp;{getElapsedDuration(post.record.createdAt)}</span>
+          <span>·&nbsp;&nbsp;{getElapsedDuration(post?.record?.createdAt)}</span>
         </div>
-        <span>{post?.record.text}</span>
-        {post.record?.embed?.images && (
+        <span>{!post?.record?.text ? post?.value?.text : post?.record.text}</span>
+        {post?.record?.embed?.images && (
           <div
             className="relative w-full rounded-lg overflow-hidden mt-4"
             style={{ ...dynamicAspectRatioStyle, position: "relative" }}
           >
             <Image
-              src={post.embed.images[0].fullsize}
-              alt={post.embed.images[0].alt || "Post Image"}
+              src={post?.embed?.images[0].fullsize}
+              alt={post?.embed?.images[0].alt || "Post Image"}
               fill
               className="absolute inset-0 object-cover"
             />
@@ -203,28 +232,32 @@ const PostTile: React.FC<PostTileProps> = ({ post, user, withdraw }) => {
         )}
         {/* Interaction Buttons */}
         <div className="flex flex-row justify-between px-3 items-center w-full mt-5">
-          <button
-            onClick={handleLikeClick}
-            className="text-red-500 hover:text-red-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md"
-          >
-            <Heart className={`w-5 h-5 ${liked ? "fill-red-500" : ""}`} size="24" />
-            &nbsp;&nbsp;{likeCount > 1000 ? `${(likeCount / 1000).toFixed(1)}k` : likeCount}
-          </button>
-          <button className="text-gray-500 hover:text-gray-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md">
-            <MessageSquare className="w-5 h-5" size="24" />
-            &nbsp;&nbsp;{post.replyCount > 1000 ? `${(post.replyCount / 1000).toFixed(1)}k` : post.replyCount}
-          </button>
-          <button className="text-gray-500 hover:text-gray-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md">
-            <RefreshCw className="w-5 h-5" size="24" />
-            &nbsp;&nbsp;{post.repostCount > 1000 ? `${(post.repostCount / 1000).toFixed(1)}k` : post.repostCount}
-          </button>
-          <button
-            onClick={handleInvestClick}
-            className="text-gray-500 hover:text-gray-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md"
-          >
-            <Currency className="w-5 h-5" size="24" />
-            &nbsp;&nbsp;{post.repostCount > 1000 ? `${(post.repostCount / 1000).toFixed(1)}k` : post.repostCount}
-          </button>
+          {!withdraw && (
+            <div className="flex flex-row justify-between px-3 items-center w-full mt-5">
+              <button
+                onClick={handleLikeClick}
+                className="text-red-500 hover:text-red-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md"
+              >
+                <Heart className={`w-5 h-5 ${liked ? "fill-red-500" : ""}`} size="24" />
+                &nbsp;&nbsp;{likeCount > 1000 ? `${(likeCount / 1000).toFixed(1)}k` : likeCount}
+              </button>
+              <button className="text-gray-500 hover:text-gray-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md">
+                <MessageSquare className="w-5 h-5" size="24" />
+                &nbsp;&nbsp;{post?.replyCount > 1000 ? `${(post?.replyCount / 1000).toFixed(1)}k` : post.replyCount}
+              </button>
+              <button className="text-gray-500 hover:text-gray-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md">
+                <RefreshCw className="w-5 h-5" size="24" />
+                &nbsp;&nbsp;{post?.repostCount > 1000 ? `${(post?.repostCount / 1000).toFixed(1)}k` : post.repostCount}
+              </button>
+              <button
+                onClick={handleInvestClick}
+                className="text-gray-500 hover:text-gray-600 focus:outline-none flex flex-row gap-0 items-center bg-base-300 px-3 py-1.5 rounded-md"
+              >
+                <Currency className="w-5 h-5" size="24" />
+                &nbsp;&nbsp;{post?.repostCount > 1000 ? `${(post?.repostCount / 1000).toFixed(1)}k` : post.repostCount}
+              </button>
+            </div>
+          )}
           {/* Withdraw Button */}
           {withdraw && (
             <button

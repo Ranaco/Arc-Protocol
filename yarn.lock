@@ -2703,7 +2703,7 @@ __metadata:
     "@rainbow-me/rainbowkit": 2.1.6
     "@tanstack/react-query": ^5.60.5
     "@trivago/prettier-plugin-sort-imports": ~4.3.0
-    "@truenetworkio/sdk": ^0.0.10
+    "@truenetworkio/sdk": ^0.0.12
     "@types/js-cookie": ^3
     "@types/node": ~18.19.50
     "@types/react": ~18.3.5
@@ -3136,15 +3136,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenetworkio/sdk@npm:^0.0.10":
-  version: 0.0.10
-  resolution: "@truenetworkio/sdk@npm:0.0.10"
+"@truenetworkio/sdk@npm:^0.0.12":
+  version: 0.0.12
+  resolution: "@truenetworkio/sdk@npm:0.0.12"
   dependencies:
     "@polkadot/api": ^13.2.1
     blakejs: ^1.2.1
     crypto: ^1.0.1
     typescript: ^5.4.2
-  checksum: 01336907d2c77d1042ccb90fe66097fd5a4c56462c82c15548c0931beb03a29be0abd28eaeabaf47148bdbac1d96868cc5e24c1799d611f9541f80e15e0b70e3
+  checksum: 77737d1171db441599494679440e07937aa617bf3f662b887268939ddaa065297ecbe764e572536aaac360effffd648ca48b48a0765d509938fc4e18c2ad9f58
   languageName: node
   linkType: hard
 

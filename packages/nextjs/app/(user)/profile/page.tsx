@@ -152,13 +152,13 @@ const ProfilePage = () => {
 
       {/* Tab System */}
       <div className="w-full max-w-3xl mt-6">
-        <TabSystem posts={posts} investments={investments} />
+        <TabSystem posts={posts} investments={investments} profile={profile} />
       </div>
     </div>
   );
 };
 
-const TabSystem = ({ posts, investments }: { posts: any[]; investments: any[] }) => {
+const TabSystem = ({ posts, investments, profile }: { posts: any[]; investments: any[]; profile: any }) => {
   const [activeTab, setActiveTab] = useState("posts");
 
   return (
@@ -180,7 +180,7 @@ const TabSystem = ({ posts, investments }: { posts: any[]; investments: any[] })
 
       <div className="w-full transition-all duration-300 ease-in-out mt-4">
         {activeTab === "posts" && <Posts posts={posts} />}
-        {activeTab === "portfolio" && <Portfolio inv={investments} />}
+        {activeTab === "portfolio" && <Portfolio inv={investments} profile={profile} />}
       </div>
     </div>
   );

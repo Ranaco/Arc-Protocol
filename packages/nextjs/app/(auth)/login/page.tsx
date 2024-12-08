@@ -41,7 +41,7 @@ const LoginPage = () => {
 
       let walletResponse;
       if (!wallet) {
-        walletResponse = await fetch("/api/wallet?" + new URLSearchParams({ id: "", seed: "" }), {
+        walletResponse = await fetch("/api/wallet?" + new URLSearchParams({ walletId: "", seed: "" }), {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

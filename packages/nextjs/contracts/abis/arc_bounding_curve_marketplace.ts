@@ -250,6 +250,30 @@ export const ARCBoundingCurveMarketplaceABI = [
         type: "string",
       },
       {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "getUserProfitOrLossForPost",
+    outputs: [
+      {
+        internalType: "int256",
+        name: "",
+        type: "int256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "postId",
+        type: "string",
+      },
+      {
         internalType: "uint256",
         name: "tokensToBuy",
         type: "uint256",
